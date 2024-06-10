@@ -1,0 +1,79 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@font-face {
+  font-family: "IranSans";
+  src: url("../fonts/Qs_Iranyekan.ttf");
+  font-style: normal;
+  font-display: swap;
+
+  /* unicode-range: U+0020-007F; */
+}
+
+body {
+  -webkit-overflow-scrolling: touch;
+}
+
+html,
+body {
+  overflow-x: hidden;
+}
+
+* {
+  font-family: "Roboto", "IranSans";
+}
+* {
+  scroll-behavior: smooth;
+  scrollbar-width: thin;
+  scrollbar-color: #DBDABF#390578;
+}
+
+*::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+
+@media only screen and (max-width: 767px) {
+  *::-webkit-scrollbar {
+    width: 3px;
+    height: 3px;
+  }
+}
+::-webkit-scrollbar-button {
+  width: 0px;
+  height: 0px;
+}
+::-webkit-scrollbar-thumb {
+  background: #dbdabf;
+  border: 0px none #ffffff;
+  border-radius: 86px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #390578;
+}
+::-webkit-scrollbar-thumb:active {
+  background: #390578;
+}
+::-webkit-scrollbar-track {
+  background: #390578;
+  border: 0px none #ffffff;
+  border-radius: 100px;
+}
+::-webkit-scrollbar-track:hover {
+  background: #dbdabf;
+}
+::-webkit-scrollbar-track:active {
+  background: #dbdabf;
+}
+::-webkit-scrollbar-corner {
+  background: transparent;
+}
