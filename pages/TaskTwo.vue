@@ -7,7 +7,7 @@
         alt=""
       />
     </div>
-    <div class="h-full w-1/2 flex items-end flex-col justify-center p-10">
+    <div class="h-full w-1/2 px-44 flex items-end flex-col justify-center p-10">
       <h1
         dir="rtl"
         class="border-b-8 rounded-md pb-3 border-mainBlue text-5xl text-mainBlack font-bold"

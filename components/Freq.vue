@@ -2,7 +2,7 @@
   <div
     v-for="faq in faqs"
     :key="faq.id"
-    class="w-full h-full justify-start items-end space-y-4 mt-24 flex-col flex"
+    class="w-full h-full justify-start items-end space-y-4 mt-10 flex-col flex"
   >
     <div class="flex items-center justify-center space-x-2">
       <h2 class="text-3xl Bold text-mainBlack">{{ faq.category }}</h2>
@@ -22,7 +22,7 @@
       class="collapse"
     >
       <input type="checkbox" />
-      <div class="collapse-title text-mainBlue text-xl font-medium">
+      <div class="collapse-title m-0 p-0 text-mainBlue text-xl font-medium">
         {{ question.question }}
       </div>
       <div class="collapse-content text-mainBlack">
