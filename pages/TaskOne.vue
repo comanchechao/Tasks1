@@ -4,7 +4,7 @@
     class="h-screen w-screen flex justify-center items-center bg-gray-200"
   >
     <div
-      class="h-rem45 w-rem28 flex-col space-y-3 drop-shadow-lg bg-mainWhite flex items-end justify-start rounded-md"
+      class="h-rem45 w-rem28 flex-col space-y-3 drop-shadow-lg card flex items-end justify-start rounded-md"
     >
       <div class="flex items-center space-x-3 m-2">
         <h1 class="text-md text-mainBlue">انتخاب کوین</h1>
@@ -106,3 +106,12 @@ const coins = ref([
   // Add more coins here if needed
 ]);
 </script>
+<style>
+.card {
+  backdrop-filter: blur(24px) saturate(200%);
+  -webkit-backdrop-filter: blur(24px) saturate(200%);
+  background-color: rgba(255, 255, 255, 0.68);
+  border-radius: 12px;
+  border: 1px solid rgba(209, 213, 219, 0.3);
+}
+</style>

@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="43.555" height="48.641" viewBox="0 0 43.555 48.641">
+  <defs>
+    <radialGradient id="radial-gradient" cx="0.5" cy="0.5" r="0.5" gradientUnits="objectBoundingBox">
+      <stop offset="0" stop-color="#6828c3"/>
+      <stop offset="1" stop-color="#4b6ce0"/>
+    </radialGradient>
+    <filter id="Path_1">
+      <feOffset dy="2" input="SourceAlpha"/>
+      <feGaussianBlur stdDeviation="2.5" result="blur"/>
+      <feFlood flood-opacity="0.161" result="color"/>
+      <feComposite operator="out" in="SourceGraphic" in2="blur"/>
+      <feComposite operator="in" in="color"/>
+      <feComposite operator="in" in2="SourceGraphic"/>
+    </filter>
+  </defs>
+  <g id="okex" transform="translate(-1826.445 -35)">
+    <path id="Path_2" data-name="Path 2" d="M33.891,0a5.175,5.175,0,0,1,4.483,2.589l9.575,16.6a5.175,5.175,0,0,1,0,5.171l-9.575,16.6a5.175,5.175,0,0,1-4.483,2.589H14.75a5.175,5.175,0,0,1-4.483-2.589L.692,24.363a5.175,5.175,0,0,1,0-5.171l9.575-16.6A5.175,5.175,0,0,1,14.75,0Z" transform="translate(1870 35) rotate(90)" fill="url(#radial-gradient)"/>
+    <g data-type="innerShadowGroup">
+      <path id="Path_1-2" data-name="Path 1" d="M14.123,31.978A14.127,14.127,0,0,1,7.849,5.2l2.717,2.415L9.291,12.551a7.328,7.328,0,0,0,4.94,12.743,7.269,7.269,0,0,0,2.828-.567l-.887,3.8,2.56,2.681A14.074,14.074,0,0,1,14.123,31.978Zm5.959-1.315h0l-2.4-2.135,1.338-5.018A7.329,7.329,0,0,0,11.25,11.266l.825-3.652-2.866-3A14.127,14.127,0,0,1,20.082,30.663Z" transform="translate(1834.207 41.268)" fill="#fff"/>
+      <g transform="matrix(1, 0, 0, 1, 1826.45, 35)" filter="url(#Path_1)">
+        <path id="Path_1-3" data-name="Path 1" d="M14.123,31.978A14.127,14.127,0,0,1,7.849,5.2l2.717,2.415L9.291,12.551a7.328,7.328,0,0,0,4.94,12.743,7.269,7.269,0,0,0,2.828-.567l-.887,3.8,2.56,2.681A14.074,14.074,0,0,1,14.123,31.978Zm5.959-1.315h0l-2.4-2.135,1.338-5.018A7.329,7.329,0,0,0,11.25,11.266l.825-3.652-2.866-3A14.127,14.127,0,0,1,20.082,30.663Z" transform="translate(7.76 6.27)" fill="#fff"/>
+      </g>
+    </g>
+  </g>
+</svg>
