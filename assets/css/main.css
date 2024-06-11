@@ -4,11 +4,18 @@
 
 @font-face {
   font-family: "IranSans";
-  src: url("../fonts/Qs_Iranyekan.ttf");
+  src: url("../fonts/YekanBakhRegular.otf");
   font-style: normal;
   font-display: swap;
 
-  /* unicode-range: U+0020-007F; */
+  unicode-range: U+0600-06FF, U+FB8A- UFEFF;
+}
+
+@font-face {
+  font-family: "Roboto";
+  src: url("../fonts/Ubuntu-Medium.ttf");
+  font-style: normal;
+  font-display: swap;
 }
 
 body {
