@@ -10,11 +10,10 @@ export function useWebsocket() {
       await new Promise((resolve) => {
         wsClient.value.onopen = () => {
           console.log("Websocket connected");
+          subscribeToChannels(["spot/ticker:BTC-USD", "spot/ticker:ETH-USD"]); // Subscribe to both channels
           resolve(); // Resolve the promise when the connection opens
         };
       });
-      subscribeToChannel("BTC"); // Replace with actual channel
-
       wsClient.value.onmessage = (message) => {
         data.value = JSON.parse(message);
       };
@@ -34,18 +33,28 @@ export function useWebsocket() {
     }
   };
 
-  const subscribeToChannel = (channel) => {
+  const subscribeToChannels = (channels) => {
     if (wsClient.value && wsClient.value.readyState === WebSocket.OPEN) {
-      const message = {
-        // Subscription message format as per documentation
-        type: "subscribe", // Replace with actual property name if different
-        channels: [channel],
-      };
-      wsClient.value.send(JSON.stringify(message));
+      channels.forEach((channel) => {
+        const message = {
+          op: "subscribe",
+          args: [channel],
+        };
+        wsClient.value.send(JSON.stringify(message));
+        console.log("Websocket is cool");
+      });
     } else {
       console.error("Websocket not connected or ready for subscription");
     }
   };
+  const sendMessage = (message) => {
+    if (wsClient.value && wsClient.value.readyState === WebSocket.OPEN) {
+      wsClient.value.send(JSON.stringify(message));
+      console.log("Websocket is cool");
+    } else {
+      console.error("Websocket not connected or ready to send message");
+    }
+  };
 
-  return { data, connect, disconnect, subscribeToChannel };
+  return { data, connect, disconnect, subscribeToChannels, sendMessage };
 }

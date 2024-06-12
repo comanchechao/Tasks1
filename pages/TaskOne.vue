@@ -88,13 +88,28 @@ import { PhMagnifyingGlass, PhXCircle, PhCoins } from "@phosphor-icons/vue";
 import { ref } from "vue";
 import { useWebsocket } from "~/composable/useWebsocket";
 
-const { data, connect, disconnect, subscribeToChannel } = useWebsocket();
-console.log(data);
+const { data, connect, disconnect } = useWebsocket();
+
+const btcPrice = ref(null);
+const ethPrice = ref(null);
+console.log("Received data2:", data);
 onMounted(async () => {
-  connect();
-  subscribeToChannel("BTC"); // Replace with actual channel
+  await connect();
+
+  // Update state variables based on data structure
+  data.value.forEach((item) => {
+    if (item.channel === "spot/ticker:BTC-USD") {
+      btcPrice.value = item.price; // Replace "price" with the actual property
+    } else if (item.channel === "spot/ticker:ETH-USD") {
+      ethPrice.value = item.price; // Replace "price" with the actual property
+    }
+  });
 });
-onUnmounted(disconnect); // Use onUnmounted instead of onBeforeDestroy
+console.log(ethPrice);
+
+onUnmounted(disconnect);
+
+console.log("Received data:", btcPrice.value);
 const coins = ref([
   {
     name: "SOL",
