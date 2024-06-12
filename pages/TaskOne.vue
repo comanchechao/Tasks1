@@ -53,8 +53,8 @@
       </div>
       <div class="my-5 w-full h-full">
         <div
-          v-for="item in coins.slice(0, 10)"
-          :key="item.name"
+          v-for="item in data"
+          :key="item.id"
           class="grid grid-cols-3 w-full my-3 hover:bg-gray-100 place-content-center content-center place-items-center"
         >
           <div class="flex w-full pl-7 items-start justify-start space-x-2">
@@ -73,7 +73,7 @@
             }"
             class="px-4 py-2 rounded-md"
           >
-            {{ item.change }}
+            <pre>{{ item.change }}</pre>
           </h2>
           <h2 class="text-sm py-2 text-mainBlack rounded-md">
             {{ item.price }}
@@ -86,7 +86,15 @@
 <script setup>
 import { PhMagnifyingGlass, PhXCircle, PhCoins } from "@phosphor-icons/vue";
 import { ref } from "vue";
+import { useWebsocket } from "~/composable/useWebsocket";
 
+const { data, connect, disconnect, subscribeToChannel } = useWebsocket();
+console.log(data);
+onMounted(async () => {
+  connect();
+  subscribeToChannel("BTC"); // Replace with actual channel
+});
+onUnmounted(disconnect); // Use onUnmounted instead of onBeforeDestroy
 const coins = ref([
   {
     name: "SOL",

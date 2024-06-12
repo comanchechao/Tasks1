@@ -2,7 +2,7 @@
   <div
     v-for="faq in faqs"
     :key="faq.id"
-    class="w-full h-full justify-start items-end space-y-4 mt-10 flex-col flex"
+    class="w-full h-full justify-start items-end space-y-4 mt-10 lg:px-0 px-8 flex-col flex"
   >
     <div class="flex items-center justify-center space-x-2">
       <h2 class="text-3xl Bold text-mainBlack">{{ faq.category }}</h2>
@@ -19,10 +19,10 @@
       v-for="(question, index) in faq.children[0].rows"
       :key="index"
       dir="rtl"
-      class="collapse"
+      class="collapse shadow-sm shadow-mainBlue"
     >
       <input type="checkbox" />
-      <div class="collapse-title m-0 p-0 text-mainBlue text-xl font-medium">
+      <div class="collapse-title m-0 p-2 text-mainBlue text-xl font-medium">
         {{ question.question }}
       </div>
       <div class="collapse-content text-mainBlack">
@@ -49,9 +49,4 @@ const faqsData = await useAsyncData("faqData", async () => {
   }
 });
 const faqs = faqsData.data._rawValue.data;
-
-console.log(
-  "Fetched FAQs successfully222:",
-  faqs[0].children[0].rows[0].question
-);
 </script>
