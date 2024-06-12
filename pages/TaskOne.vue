@@ -85,27 +85,29 @@
 </template>
 <script setup>
 import { PhMagnifyingGlass, PhXCircle, PhCoins } from "@phosphor-icons/vue";
-import { ref } from "vue";
-import { useWebsocket } from "~/composable/useWebsocket";
+import { ref, onMounted, onUnmounted } from "vue";
+import { useWebsocket } from "../composable/useWebsocket"; // Assuming composable path
 
 const { data, connect, disconnect } = useWebsocket();
-
 const btcPrice = ref(null);
 const ethPrice = ref(null);
-console.log("Received data2:", data);
-onMounted(async () => {
-  await connect();
 
-  // Update state variables based on data structure
-  data.value.forEach((item) => {
-    if (item.channel === "spot/ticker:BTC-USD") {
-      btcPrice.value = item.price; // Replace "price" with the actual property
-    } else if (item.channel === "spot/ticker:ETH-USD") {
-      ethPrice.value = item.price; // Replace "price" with the actual property
-    }
-  });
+onMounted(async () => {
+  try {
+    await connect();
+    console.log("Received data:", data.value);
+
+    data.value.forEach((item) => {
+      if (item.channel === "ticker:ZIL-USDT") {
+        btcPrice.value = item.price; // Replace "price" with the actual property
+      } else if (item.channel === "ticker:ZIL-USDT") {
+        ethPrice.value = item.price; // Replace "price" with the actual property
+      }
+    });
+  } catch (error) {
+    console.error("Websocket error:", error);
+  }
 });
-console.log(ethPrice);
 
 onUnmounted(disconnect);
 
