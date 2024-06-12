@@ -1,10 +1,10 @@
 import { ref } from "vue";
 
 export function useWebsocket() {
-  const data = ref([]); // Stores the received data
+  let data = ref([]); // Stores the received data
   const wsClient = ref(null); // Reference to the websocket client
   let receivedData = "";
-
+  let jsonData = ref([]);
   // const cryptoChannels = [
   //   "spot/ticker:ETH-USD",
   //   "spot/ticker:BTC-USD",
@@ -24,10 +24,13 @@ export function useWebsocket() {
       });
       wsClient.value.onmessage = (message) => {
         receivedData += message.data;
-        console.log(message.data);
+
         if (receivedData.endsWith("}")) {
           try {
-            const jsonData = JSON.parse(receivedData);
+            const newData = JSON.parse(receivedData);
+            jsonData.value = newData;
+            console.log(newData);
+
             // Process the parsed data (update crypto coin states)
             receivedData = ""; // Reset buffer for next message
           } catch (error) {
@@ -70,5 +73,5 @@ export function useWebsocket() {
 
   // ...
 
-  return { data, connect, disconnect, subscribeToChannels };
+  return { jsonData, connect, disconnect, subscribeToChannels };
 }

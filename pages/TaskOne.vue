@@ -53,8 +53,8 @@
       </div>
       <div class="my-5 w-full h-full">
         <div
-          v-for="item in data"
-          :key="item.id"
+          v-for="data in readable"
+          :key="data.id"
           class="grid grid-cols-3 w-full my-3 hover:bg-gray-100 place-content-center content-center place-items-center"
         >
           <div class="flex w-full pl-7 items-start justify-start space-x-2">
@@ -64,7 +64,7 @@
               class="object-contain w-7"
               alt=""
             />
-            <h2 class="text-sm text-mainBlack">{{ item.name }}</h2>
+            <h2 class="text-sm text-mainBlack">{{ data.instId }}</h2>
           </div>
           <h2
             :class="{
@@ -73,10 +73,10 @@
             }"
             class="px-4 py-2 rounded-md"
           >
-            <pre>{{ item.change }}</pre>
+            <pre>{{ data.change }}</pre>
           </h2>
           <h2 class="text-sm py-2 text-mainBlack rounded-md">
-            {{ item.price }}
+            {{ data.price }}
           </h2>
         </div>
       </div>
@@ -85,33 +85,26 @@
 </template>
 <script setup>
 import { PhMagnifyingGlass, PhXCircle, PhCoins } from "@phosphor-icons/vue";
-import { ref, onMounted, onUnmounted } from "vue";
+import { ref, onMounted, onUnmounted, watchEffect } from "vue";
 import { useWebsocket } from "../composable/useWebsocket"; // Assuming composable path
 
-const { data, connect, disconnect } = useWebsocket();
-const btcPrice = ref(null);
+const { connect, disconnect, subscribeToChannels, jsonData } = useWebsocket(); // Destructure everythingconst btcPrice = ref(null);
 const ethPrice = ref(null);
 
 onMounted(async () => {
-  try {
-    await connect();
-    console.log("Received data:", data.value);
-
-    data.value.forEach((item) => {
-      if (item.channel === "ticker:ZIL-USDT") {
-        btcPrice.value = item.price; // Replace "price" with the actual property
-      } else if (item.channel === "ticker:ZIL-USDT") {
-        ethPrice.value = item.price; // Replace "price" with the actual property
-      }
-    });
-  } catch (error) {
-    console.error("Websocket error:", error);
-  }
+  await connect();
+  subscribeToChannels();
 });
-
 onUnmounted(disconnect);
 
-console.log("Received data:", btcPrice.value);
+watchEffect(() => {
+  const { data } = jsonData.value;
+  const readable = toRaw(data);
+
+  // Destructure data from jsonData
+  console.log("Received raw data:", readable);
+}, [jsonData]);
+
 const coins = ref([
   {
     name: "SOL",
