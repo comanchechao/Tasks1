@@ -53,23 +53,23 @@
       </div>
       <div class="my-5 w-full h-full">
         <div
-          v-for="data in readable"
+          v-for="data in coins"
           :key="data.id"
           class="grid grid-cols-3 w-full my-3 hover:bg-gray-100 place-content-center content-center place-items-center"
         >
           <div class="flex w-full pl-7 items-start justify-start space-x-2">
             <img
-              :src="item.icon"
-              :key="item.name"
+              :src="data.icon"
+              :key="data.name"
               class="object-contain w-7"
               alt=""
             />
-            <h2 class="text-sm text-mainBlack">{{ data.instId }}</h2>
+            <h2 class="text-sm font-normal text-mainBlack">{{ data.name }}</h2>
           </div>
           <h2
             :class="{
-              'bg-green-100 text-green-500': parseFloat(item.change) > 0,
-              'bg-red-100 text-red-500': parseFloat(item.change) < 0,
+              'bg-green-100 text-green-500': parseFloat(data.change) > 0,
+              'bg-red-100 text-red-500': parseFloat(data.change) < 0,
             }"
             class="px-4 py-2 rounded-md"
           >
@@ -89,40 +89,101 @@ import { ref, onMounted, onUnmounted, watchEffect } from "vue";
 import { useWebsocket } from "../composable/useWebsocket"; // Assuming composable path
 
 const { connect, disconnect, subscribeToChannels, jsonData } = useWebsocket(); // Destructure everythingconst btcPrice = ref(null);
-const ethPrice = ref(null);
-
-onMounted(async () => {
-  await connect();
-  subscribeToChannels();
-});
-onUnmounted(disconnect);
-
-watchEffect(() => {
-  const { data } = jsonData.value;
-  const readable = toRaw(data);
-
-  // Destructure data from jsonData
-  console.log("Received raw data:", readable);
-}, [jsonData]);
-
 const coins = ref([
   {
-    name: "SOL",
+    name: "SOL-USDT",
     icon: "/SOL.webp",
     change: "0.22%",
     price: "11309 USD",
   },
-  { name: "BTC", icon: "/BTC.webp", change: "0.73%", price: "43215.00 USDT" },
-  { name: "ETH", icon: "/Eth.webp", change: "-5.16%", price: "2283.60 USDT" },
-  { name: "OP", icon: "/OP.webp", change: "-2.99%", price: "3.567 USDT" },
-  { name: "AVAX", icon: "/Avax.webp", change: "0.44%", price: "47.53 USDT" },
-  { name: "DOT", icon: "/Dot.webp", change: "6.84%", price: "9.128 USDT" },
-  { name: "XRP", icon: "/Xrp.webp", change: "0.28%", price: "0.6164 USDT" },
-  { name: "ARB", icon: "/Arb.webp", change: "2.05%", price: "13839 USDT" },
-  { name: "NEAR", icon: "/Near.webp", change: "0.82%", price: "30920 USDT" },
-  { name: "MATIC", icon: "/matic.webp", change: "2.86%", price: "0.8697 USDT" },
-  // Add more coins here if needed
+  {
+    name: "BTC-USDT",
+    icon: "/BTC.webp",
+    change: "0.73%",
+    price: "43215.00 USDT",
+  },
+  {
+    name: "ETH-USDT",
+    icon: "/Eth.webp",
+    change: "-5.16%",
+    price: "2283.60 USDT",
+  },
+  { name: "OP-USDT", icon: "/OP.webp", change: "-2.99%", price: "3.567 USDT" },
+  {
+    name: "AVAX-USDT",
+    icon: "/Avax.webp",
+    change: "0.44%",
+    price: "47.53 USDT",
+  },
+  { name: "DOT-USDT", icon: "/Dot.webp", change: "6.84%", price: "9.128 USDT" },
+  {
+    name: "XRP-USDT",
+    icon: "/Xrp.webp",
+    change: "0.28%",
+    price: "0.6164 USDT",
+  },
+  { name: "ARB-USDT", icon: "/Arb.webp", change: "2.05%", price: "13839 USDT" },
+  {
+    name: "NEAR-USDT",
+    icon: "/Near.webp",
+    change: "0.82%",
+    price: "30920 USDT",
+  },
+  {
+    name: "MATIC-USDT",
+    icon: "/matic.webp",
+    change: "2.86%",
+    price: "0.8697 USDT",
+  },
 ]);
+const allCoins = ref([]);
+
+const getTickets = async () => {
+  const { data } = await $fetch("https://api.ok-ex.io/oapi/v1/market/tickers", {
+    headers: {},
+  })
+    .then(function (response) {
+      console.log(response);
+      allCoins.value = response;
+    })
+    .catch(function (error) {
+      console.error(error);
+    });
+};
+
+onMounted(async () => {
+  await connect();
+  coins.value.forEach((coin) => {
+    subscribeToChannels(coin);
+  });
+});
+onUnmounted(disconnect);
+
+watchEffect(() => {
+  if (jsonData.value) {
+    // console.log("jsonData:", jsonData.value);
+
+    // Loop through jsonData array
+    jsonData.value.forEach((dataObject) => {
+      // Find matching coin in coins array based on a property (e.g., 'instId')
+      const matchingCoin = coins.value.find(
+        (coin) => coin.name === dataObject.instId // Adjust based on your identifier
+      );
+
+      if (matchingCoin) {
+        matchingCoin.price = `${dataObject.last} USDT`; // Update price
+        const change24h =
+          parseFloat(dataObject.last) - parseFloat(dataObject.open24h);
+        matchingCoin.change = `${(
+          (change24h / parseFloat(dataObject.open24h)) *
+          100
+        ).toFixed(2)}%`; // Update change
+      } else {
+        console.warn("Missing data for coin with instId:", dataObject.instId);
+      }
+    });
+  }
+}, [jsonData]);
 </script>
 <style>
 .card {

@@ -1,11 +1,10 @@
 import { ref } from "vue";
 
 export function useWebsocket() {
-  let data = ref([]); // Stores the received data
+  const data = ref([]); // Stores the received data
   const wsClient = ref(null); // Reference to the websocket client
   let receivedData = "";
-  let jsonData = ref([]);
-  // const cryptoChannels = [
+  const jsonData = ref([]); // const cryptoChannels = [
   //   "spot/ticker:ETH-USD",
   //   "spot/ticker:BTC-USD",
   //   // ... add channels for 8 more coins (replace with desired symbols)
@@ -17,21 +16,17 @@ export function useWebsocket() {
       await new Promise((resolve) => {
         wsClient.value.onopen = () => {
           console.log("Websocket connected");
-          subscribeToChannels();
 
           resolve(); // Resolve the promise when the connection opens
         };
       });
       wsClient.value.onmessage = (message) => {
         receivedData += message.data;
-
+        // console.log(message.data);
         if (receivedData.endsWith("}")) {
           try {
-            const newData = JSON.parse(receivedData);
-            jsonData.value = newData;
-            console.log(newData);
-
-            // Process the parsed data (update crypto coin states)
+            const jsonData = JSON.parse(receivedData);
+            console.log(jsonData);
             receivedData = ""; // Reset buffer for next message
           } catch (error) {
             console.error("JSON parsing error:", error);
@@ -52,7 +47,8 @@ export function useWebsocket() {
       wsClient.value.close();
     }
   };
-  const subscribeToChannels = () => {
+  const subscribeToChannels = (coin) => {
+    // console.log(coin);
     if (wsClient.value && wsClient.value.readyState === WebSocket.OPEN) {
       // Use the channels argument for subscription
       const message = {
@@ -60,7 +56,7 @@ export function useWebsocket() {
         args: [
           {
             channel: "tickers",
-            instId: "ZIL-USDT",
+            instId: coin.name,
           },
         ],
       };
