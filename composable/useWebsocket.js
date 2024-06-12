@@ -24,6 +24,7 @@ export function useWebsocket() {
       });
       wsClient.value.onmessage = (message) => {
         receivedData += message.data;
+        console.log(message.data);
         if (receivedData.endsWith("}")) {
           try {
             const jsonData = JSON.parse(receivedData);
