@@ -3,6 +3,11 @@ import { ref } from "vue";
 export function useWebsocket() {
   const data = ref([]); // Stores the received data
   const wsClient = ref(null); // Reference to the websocket client
+  const cryptoChannels = [
+    "spot/ticker:ETH-USD",
+    "spot/ticker:BTC-USD",
+    // ... add channels for 8 more coins (replace with desired symbols)
+  ];
 
   const connect = async () => {
     try {
@@ -10,7 +15,7 @@ export function useWebsocket() {
       await new Promise((resolve) => {
         wsClient.value.onopen = () => {
           console.log("Websocket connected");
-          subscribeToChannels(["spot/ticker:BTC-USD", "spot/ticker:ETH-USD"]); // Subscribe to both channels
+          subscribeToChannels(cryptoChannels);
           resolve(); // Resolve the promise when the connection opens
         };
       });
@@ -38,7 +43,16 @@ export function useWebsocket() {
       channels.forEach((channel) => {
         const message = {
           op: "subscribe",
-          args: [channel],
+          args: [
+            {
+              channel: "tickers",
+              instId: "LTC-USD",
+            },
+            {
+              channel: "candle1m",
+              instId: "LTC-USD",
+            },
+          ],
         };
         wsClient.value.send(JSON.stringify(message));
         console.log("Websocket is cool");
