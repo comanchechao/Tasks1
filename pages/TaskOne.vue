@@ -178,10 +178,6 @@ onMounted(async () => {
   subscribeToChannels(coins, subscriptions);
   unsubscribeToChannels(unsubscribeList);
   updateCoins();
-  const matchingValues = rawData
-    .filter((obj) => ({ [searchProperty]: obj[searchProperty] }))
-    [searchProperty].map((val) => val);
-  console.log(matchingValues);
   console.log("jsonData:", rawData);
 });
 onUnmounted(disconnect);
