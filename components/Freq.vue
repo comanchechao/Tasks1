@@ -32,7 +32,7 @@
   </div>
 </template>
 <script setup>
-import { useAsyncData } from "#app"; // Import useAsyncData hook
+import { useAsyncData } from "#app";
 
 const faqsData = await useAsyncData("faqData", async () => {
   try {
@@ -45,7 +45,7 @@ const faqsData = await useAsyncData("faqData", async () => {
     return data;
   } catch (error) {
     console.error("Error fetching FAQs:", error);
-    return []; // Return an empty array in case of error
+    return [];
   }
 });
 const faqs = faqsData.data._rawValue.data;

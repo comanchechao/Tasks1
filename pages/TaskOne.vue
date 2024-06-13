@@ -271,7 +271,6 @@ onMounted(async () => {
   await connect();
   subscribeToChannels(coins);
   unsubscribeToChannels(unsubscribeList);
-
   setInterval(async () => {
     await connect();
     subscribeToChannels(coins);
