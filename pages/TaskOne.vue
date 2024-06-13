@@ -76,7 +76,7 @@
             <pre>{{ coin.change }}%</pre>
           </h2>
           <h2 class="text-sm py-2 text-mainBlack rounded-md">
-            {{ coin.price }}
+            {{ coin.price }} USDT
           </h2>
         </div>
       </div>
@@ -86,60 +86,158 @@
 <script setup>
 import { PhMagnifyingGlass, PhXCircle, PhCoins } from "@phosphor-icons/vue";
 import { ref, onMounted, onUnmounted, watchEffect } from "vue";
-import { useWebsocket } from "../composable/useWebsocket"; // Assuming composable path
+const wsClient = ref(null);
+const formattedCoinData = ref([]);
+let receivedData = "";
+const formatChange = ref("");
+const connect = async () => {
+  try {
+    wsClient.value = new WebSocket("wss://wsg.ok-ex.io/ws");
+    await new Promise((resolve) => {
+      wsClient.value.onopen = () => {
+        resolve();
+      };
+    });
 
-const {
-  connect,
-  disconnect,
-  subscribeToChannels,
-  coinsData,
-  unsubscribeToChannels,
-} = useWebsocket();
+    wsClient.value.onmessage = (message) => {
+      receivedData += message.data;
+      if (receivedData.endsWith("}")) {
+        try {
+          const newData = JSON.parse(receivedData);
+          receivedData = "";
+
+          const formattedCoinData = [
+            {
+              name: newData.data[0].instId,
+
+              change: (
+                ((parseFloat(newData.data[0].high24h) -
+                  parseFloat(newData.data[0].open24h)) /
+                  parseFloat(newData.data[0].open24h)) *
+                100
+              ).toFixed(2),
+
+              price: newData.data[0].last,
+            },
+          ];
+          updateCoins(formattedCoinData);
+          formatChange.value = formattedCoinData;
+        } catch (error) {
+          console.error("JSON parsing error:", error);
+        }
+      }
+    };
+
+    wsClient.value.onclose = () => {
+      wsClient.value = null;
+    };
+  } catch (error) {
+    console.error("Websocket connection error:", error);
+  }
+};
+
+watch(formatChange, (Cur, old) => {
+  updateCoins(Cur);
+});
+
+const disconnect = () => {
+  if (wsClient.value) {
+    wsClient.value.close();
+  }
+};
+const updateCoins = (formattedData) => {
+  coins.value.forEach((coin, index) => {
+    const matchingData = formattedData.find((data) => data.name === coin.name);
+    if (matchingData) {
+      coins.value[index] = {
+        ...coin,
+        ...matchingData,
+      };
+    }
+  });
+};
+const subscribeToChannels = (coins) => {
+  coins.value.forEach((coin) => {
+    if (wsClient.value && wsClient.value.readyState === WebSocket.OPEN) {
+      const message = {
+        op: "subscribe",
+        args: [
+          {
+            channel: "tickers",
+            instId: coin.name,
+          },
+        ],
+      };
+      wsClient.value.send(JSON.stringify(message));
+    } else {
+      console.error("Websocket not connected or ready for subscription");
+    }
+  });
+};
+const unsubscribeToChannels = (unsubscribeList) => {
+  unsubscribeList.forEach((coin) => {
+    if (wsClient.value && wsClient.value.readyState === WebSocket.OPEN) {
+      const message = {
+        op: "unsubscribe",
+        args: [
+          {
+            channel: "tickers",
+            instId: coin,
+          },
+        ],
+      };
+      wsClient.value.send(JSON.stringify(message));
+    } else {
+      console.error("Websocket not connected or ready for subscription");
+    }
+  });
+};
+
 const coins = ref([
   {
     name: "SOLUSDT",
     icon: "/SOL.webp",
-    change: "0.22%",
-    price: "11309 USD",
+    change: "",
+    price: "",
   },
   {
     name: "BTCUSDT",
     icon: "/BTC.webp",
-    change: "0.73%",
-    price: "43215.00 USDT",
+    change: "",
+    price: "",
   },
   {
     name: "ETHUSDT",
     icon: "/Eth.webp",
-    change: "-5.16%",
-    price: "2283.60 USDT",
+    change: "",
+    price: "",
   },
-  { name: "OPUSDT", icon: "/OP.webp", change: "-2.99%", price: "3.567 USDT" },
+  { name: "OPUSDT", icon: "/OP.webp", change: "", price: "" },
   {
     name: "AVAXUSDT",
     icon: "/Avax.webp",
-    change: "0.44%",
-    price: "47.53 USDT",
+    change: "",
+    price: "",
   },
-  { name: "DOTUSDT", icon: "/Dot.webp", change: "6.84%", price: "9.128 USDT" },
+  { name: "DOTUSDT", icon: "/Dot.webp", change: "", price: "" },
   {
     name: "XRPUSDT",
     icon: "/Xrp.webp",
-    change: "0.28%",
-    price: "0.6164 USDT",
+    change: "",
+    price: "",
   },
-  { name: "ARBUSDT", icon: "/Arb.webp", change: "2.05%", price: "13839 USDT" },
+  { name: "ARBUSDT", icon: "/Arb.webp", change: "", price: "" },
   {
     name: "NEARUSDT",
     icon: "/Near.webp",
-    change: "0.82%",
-    price: "30920 USDT",
+    change: "",
+    price: "",
   },
   {
     name: "MATICUSDT",
     icon: "/matic.webp",
-    change: "2.86%",
-    price: "0.8697 USDT",
+    change: "",
+    price: "",
   },
 ]);
 const allCoins = ref([]);
@@ -149,7 +247,6 @@ const getTickets = async () => {
     headers: {},
   })
     .then(function (response) {
-      // console.log(response);
       allCoins.value = response;
     })
     .catch(function (error) {
@@ -170,31 +267,21 @@ const unsubscribeList = [
   ,
 ];
 
-const rawData = toRaw(coinsData._rawValue);
-const searchProperty = "change"; // Property to search
-
 onMounted(async () => {
   await connect();
-  subscribeToChannels(coins, subscriptions);
+  subscribeToChannels(coins);
   unsubscribeToChannels(unsubscribeList);
-  updateCoins();
-  console.log("jsonData:", rawData);
+
+  setInterval(async () => {
+    await connect();
+    subscribeToChannels(coins);
+    unsubscribeToChannels(unsubscribeList);
+  }, 5000);
 });
-onUnmounted(disconnect);
 
-const updateCoins = () => {
-  for (const coin of coins.value) {
-    const matchingData = rawData.find((data) => data.name === coin.name);
-    if (matchingData) {
-      coin.change = matchingData.change;
-      coin.price = matchingData.price;
-    } else {
-      console.warn("No matching data found for:", coin.name); // Informative warning
-    }
-  }
-};
-
-watch(rawData, updateCoins, { deep: true });
+onUnmounted(() => {
+  disconnect();
+});
 </script>
 <style>
 .card {
